@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 // Breakpoint Mixins
 @mixin sm {
   @media (min-width: $breakpoint-sm) {
