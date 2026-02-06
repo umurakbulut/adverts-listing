@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { ChevronLeft, ChevronRight, X } from 'lucide-vue-next'
 import { getListingItemImageUrl, ImageResolution } from '@/utils'
 
@@ -42,11 +42,17 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'ArrowRight') goToNext()
 }
 
-defineExpose({ handleKeydown })
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <template>
-  <div class="slider" @keydown="handleKeydown" tabindex="0">
+  <div class="slider">
     <div class="slider__main" @click="openFullscreen">
       <img
         :src="getListingItemImageUrl(currentPhoto, ImageResolution.LARGE)"

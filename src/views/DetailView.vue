@@ -14,7 +14,7 @@ const id = computed(() => route.params.id as string)
 
 const photos = computed(() => {
   if (!detailStore.item) return []
-  return detailStore.item.photos?.length ? detailStore.item.photos : [detailStore.item.photo]
+  return detailStore.item.photos ?? []
 })
 
 const goBack = () => {
@@ -59,7 +59,10 @@ onUnmounted(() => {
           <div class="detail__meta">
             <div class="detail__meta-item">
               <MapPin :size="18" />
-              <span>{{ detailStore.item.location.cityName }}, {{ detailStore.item.location.townName }}</span>
+              <span
+                >{{ detailStore.item.location.cityName }},
+                {{ detailStore.item.location.townName }}</span
+              >
             </div>
             <div class="detail__meta-item">
               <Calendar :size="18" />

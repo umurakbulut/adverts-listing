@@ -1,4 +1,3 @@
-<script setup lang="ts"></script>
 <template>
   <div class="loading">
     <div class="loading__spinner"></div>

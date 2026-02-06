@@ -1,9 +1,9 @@
 import type { IListingItem, IListingFilter } from '@/types'
-import { fetchApi, buildQueryString } from '.'
+import { fetchApi, buildSearchParams } from '.'
 
 export const listingService = {
   async getListingItems(filters: IListingFilter): Promise<IListingItem[]> {
-    const queryString = buildQueryString(filters)
+    const queryString = buildSearchParams(filters)
     return fetchApi<IListingItem[]>(`/listing?${queryString}`)
   },
 }

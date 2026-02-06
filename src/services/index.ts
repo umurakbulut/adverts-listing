@@ -18,7 +18,7 @@ export async function fetchApi<T>(url: string, options: RequestInit = {}): Promi
   return response.json()
 }
 
-export function buildQueryString(filters: IListingFilter): string {
+export function buildSearchParams(filters: IListingFilter): string {
   const params = new URLSearchParams()
 
   params.append('sort', String(filters.sort))
