@@ -7,8 +7,6 @@ export interface IListingFilter {
   maxDate?: string
   minYear?: number
   maxYear?: number
-  minPrice?: number
-  maxPrice?: number
 }
 
 export enum SortType {

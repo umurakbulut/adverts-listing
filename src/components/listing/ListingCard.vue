@@ -42,7 +42,7 @@ defineProps<{
 
       <div class="listing-card__properties" v-if="item.properties?.length">
         <span v-for="(prop, index) in item.properties" :key="index" class="listing-card__property">
-          {{ prop.value !== '' || prop.value !== null ? prop.value : '-' }}
+          {{ prop.value !== '' && prop.value !== null ? prop.value : '-' }}
         </span>
       </div>
     </div>
