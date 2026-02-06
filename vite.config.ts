@@ -23,4 +23,13 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://sandbox.arabamd.com',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
