@@ -68,13 +68,13 @@ defineProps<{
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background-color: $color-gray-200;
+    background-color: $color-gray-100;
   }
 
   &__image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.3s ease;
 
     .listing-card:hover & {
