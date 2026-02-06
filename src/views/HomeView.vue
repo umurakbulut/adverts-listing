@@ -3,9 +3,15 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { AlertCircle, Search, SlidersHorizontal, ChevronDown } from 'lucide-vue-next'
 import { useListingStore } from '@/stores/listingStore'
-import { parseFiltersFromQuery, buildQueryFromFilters, getActiveFilterCount } from '@/utils'
+import {
+  parseFiltersFromQuery,
+  buildQueryFromFilters,
+  getActiveFilterCount,
+  getCurrentPage,
+} from '@/utils'
 import type { IListingFilter } from '@/types'
 import AppLoading from '@/components/common/AppLoading.vue'
+import AppPagination from '@/components/common/AppPagination.vue'
 import ListingCard from '@/components/listing/ListingCard.vue'
 import FilterModal from '@/components/listing/FilterModal.vue'
 
@@ -17,6 +23,7 @@ const takeOptions = [20, 50]
 
 const currentFilters = ref<IListingFilter>(parseFiltersFromQuery(route.query))
 const activeFilterCount = computed(() => getActiveFilterCount(currentFilters.value))
+const currentPage = computed(() => getCurrentPage(currentFilters.value))
 
 const updateUrlQuery = () => {
   router.replace({ query: buildQueryFromFilters(currentFilters.value) })
@@ -34,6 +41,12 @@ const handleApplyFilters = (filters: IListingFilter) => {
 const handleTakeChange = (e: Event) => {
   const value = Number((e.target as HTMLSelectElement).value)
   currentFilters.value = { ...currentFilters.value, take: value, skip: 0 }
+  updateUrlQuery()
+}
+
+const handlePageChange = (page: number) => {
+  const skip = (page - 1) * currentFilters.value.take
+  currentFilters.value = { ...currentFilters.value, skip }
   updateUrlQuery()
 }
 
@@ -89,9 +102,18 @@ watch(
       <p>Henüz ilan bulunamadı</p>
     </div>
 
-    <div v-else class="home__grid">
-      <ListingCard v-for="item in listingStore.items" :key="item.id" :item="item" />
-    </div>
+    <template v-else>
+      <div class="home__grid">
+        <ListingCard v-for="item in listingStore.items" :key="item.id" :item="item" />
+      </div>
+
+      <AppPagination
+        :current-page="currentPage"
+        :item-count="listingStore.items.length"
+        :page-size="currentFilters.take"
+        @page-change="handlePageChange"
+      />
+    </template>
   </div>
 </template>
 

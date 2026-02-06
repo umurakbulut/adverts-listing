@@ -10,9 +10,12 @@ export const DEFAULT_FILTERS: IListingFilter = {
 }
 
 export function parseFiltersFromQuery(query: LocationQuery): IListingFilter {
+  const take = query.take ? Number(query.take) : DEFAULT_FILTERS.take
+  const page = query.page ? Number(query.page) : 1
+
   return {
-    take: query.take ? Number(query.take) : DEFAULT_FILTERS.take,
-    skip: query.skip ? Number(query.skip) : DEFAULT_FILTERS.skip,
+    take,
+    skip: (page - 1) * take,
     sort: query.sort !== undefined ? Number(query.sort) : DEFAULT_FILTERS.sort,
     sortDirection:
       query.sortDirection !== undefined
@@ -27,8 +30,10 @@ export function parseFiltersFromQuery(query: LocationQuery): IListingFilter {
 
 export function buildQueryFromFilters(filters: IListingFilter): LocationQueryRaw {
   const query: Record<string, string> = {}
+  const page = Math.floor(filters.skip / filters.take) + 1
 
   if (filters.take !== DEFAULT_FILTERS.take) query.take = String(filters.take)
+  if (page > 1) query.page = String(page)
   if (filters.sort !== DEFAULT_FILTERS.sort) query.sort = String(filters.sort)
   if (filters.sortDirection !== DEFAULT_FILTERS.sortDirection)
     query.sortDirection = String(filters.sortDirection)
@@ -38,6 +43,10 @@ export function buildQueryFromFilters(filters: IListingFilter): LocationQueryRaw
   if (filters.maxYear) query.maxYear = String(filters.maxYear)
 
   return query
+}
+
+export function getCurrentPage(filters: IListingFilter): number {
+  return Math.floor(filters.skip / filters.take) + 1
 }
 
 export function getActiveFilterCount(filters: IListingFilter): number {
