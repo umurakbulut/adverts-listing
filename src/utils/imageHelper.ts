@@ -5,7 +5,6 @@ export enum ImageResolution {
   MEDIUM = '580x435',
   LARGE = '800x600',
   XL = '1920x1080',
-  FULL = '1280x960',
 }
 
 export function getListingItemImageUrl(

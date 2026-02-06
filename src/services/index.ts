@@ -3,7 +3,13 @@ import type { IListingFilter } from '@/types'
 const API_BASE_URL = '/api/v1'
 
 export async function fetchApi<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${url}`, options)
+  const response = await fetch(`${API_BASE_URL}${url}`, {
+    ...options,
+    headers: {
+      Accept: 'application/json',
+      ...options?.headers,
+    },
+  })
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)

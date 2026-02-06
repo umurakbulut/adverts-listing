@@ -8,10 +8,11 @@ export interface IListingItem {
   priceFormatted: string
   date: string
   dateFormatted: string
-  photo: string
   properties: IVehicleProperty[]
-  text: string
   userInfo: IUserInfo
+  photo: string
+  photos?: string[]
+  text?: string
 }
 
 export interface ILocation {

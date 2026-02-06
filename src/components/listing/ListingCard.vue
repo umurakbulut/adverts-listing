@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import { MapPin, Calendar } from 'lucide-vue-next'
 import { getListingItemImageUrl } from '@/utils'
 import type { IListingItem } from '@/types'
@@ -10,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-  <article class="listing-card">
+  <RouterLink :to="{ name: 'Detail', params: { id: item.id } }" class="listing-card">
     <div class="listing-card__image-wrapper">
       <img
         :src="getListingItemImageUrl(item.photo, ImageResolution.LARGE)"
@@ -46,11 +47,13 @@ defineProps<{
         </span>
       </div>
     </div>
-  </article>
+  </RouterLink>
 </template>
 
 <style scoped lang="scss">
 .listing-card {
+  display: block;
+  text-decoration: none;
   background: $color-white;
   border-radius: $border-radius-lg;
   overflow: hidden;

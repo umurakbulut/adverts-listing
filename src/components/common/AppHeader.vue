@@ -40,6 +40,7 @@ const navigateTo = (path: string) => {
 
   &__logo {
     height: 32px;
+    cursor: pointer;
 
     &-image {
       height: 100%;
