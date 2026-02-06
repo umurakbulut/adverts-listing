@@ -26,7 +26,17 @@ watch(
 )
 
 const handleApply = () => {
-  emit('apply', { ...filters.value })
+  const result = { ...filters.value }
+
+  if (result.minYear && result.maxYear && result.maxYear < result.minYear) {
+    result.maxYear = undefined
+  }
+
+  if (result.minDate && result.maxDate && result.maxDate < result.minDate) {
+    result.maxDate = undefined
+  }
+
+  emit('apply', result)
   emit('close')
 }
 
