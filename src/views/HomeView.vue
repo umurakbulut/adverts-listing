@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { AlertCircle, Search, SlidersHorizontal, ChevronDown } from 'lucide-vue-next'
 import { useListingStore } from '@/stores/listingStore'
-import {
-  parseFiltersFromQuery,
-  buildQueryFromFilters,
-  getActiveFilterCount,
-  getCurrentPage,
-} from '@/utils'
+import { parseFiltersFromQuery, buildQueryFromFilters } from '@/utils'
 import type { IListingFilter } from '@/types'
 import AppLoading from '@/components/common/AppLoading.vue'
 import AppPagination from '@/components/common/AppPagination.vue'
@@ -21,40 +16,30 @@ const router = useRouter()
 const isFilterOpen = ref(false)
 const takeOptions = [20, 50]
 
-const currentFilters = ref<IListingFilter>(parseFiltersFromQuery(route.query))
-const activeFilterCount = computed(() => getActiveFilterCount(currentFilters.value))
-const currentPage = computed(() => getCurrentPage(currentFilters.value))
-
-const updateUrlQuery = () => {
-  router.replace({ query: buildQueryFromFilters(currentFilters.value) })
-}
-
-const fetchListings = () => {
-  listingStore.getListingItems(currentFilters.value)
+const syncUrlWithFilters = () => {
+  router.replace({ query: buildQueryFromFilters(listingStore.filters) })
 }
 
 const handleApplyFilters = (filters: IListingFilter) => {
-  currentFilters.value = { ...filters, skip: 0 }
-  updateUrlQuery()
+  listingStore.applyFilters(filters)
+  syncUrlWithFilters()
 }
 
 const handleTakeChange = (e: Event) => {
-  const value = Number((e.target as HTMLSelectElement).value)
-  currentFilters.value = { ...currentFilters.value, take: value, skip: 0 }
-  updateUrlQuery()
+  listingStore.setTake(Number((e.target as HTMLSelectElement).value))
+  syncUrlWithFilters()
 }
 
 const handlePageChange = (page: number) => {
-  const skip = (page - 1) * currentFilters.value.take
-  currentFilters.value = { ...currentFilters.value, skip }
-  updateUrlQuery()
+  listingStore.setPage(page)
+  syncUrlWithFilters()
 }
 
 watch(
   () => route.query,
   () => {
-    currentFilters.value = parseFiltersFromQuery(route.query)
-    fetchListings()
+    listingStore.setFilters(parseFiltersFromQuery(route.query))
+    listingStore.fetchItems()
   },
   { deep: true, immediate: true },
 )
@@ -69,13 +54,13 @@ watch(
         <button class="home__filter-btn" @click="isFilterOpen = true">
           <SlidersHorizontal :size="20" />
           <span>Filtrele</span>
-          <span v-if="activeFilterCount > 0" class="home__filter-badge">{{
-            activeFilterCount
-          }}</span>
+          <span v-if="listingStore.activeFilterCount > 0" class="home__filter-badge">
+            {{ listingStore.activeFilterCount }}
+          </span>
         </button>
 
         <div class="home__take">
-          <select :value="currentFilters.take" class="home__take-select" @change="handleTakeChange">
+          <select :value="listingStore.filters.take" class="home__take-select" @change="handleTakeChange">
             <option v-for="opt in takeOptions" :key="opt" :value="opt">{{ opt }} ilan</option>
           </select>
           <ChevronDown class="home__take-icon" :size="16" />
@@ -85,7 +70,7 @@ watch(
 
     <FilterModal
       :is-open="isFilterOpen"
-      :current-filters="currentFilters"
+      :current-filters="listingStore.filters"
       @close="isFilterOpen = false"
       @apply="handleApplyFilters"
     />
@@ -108,9 +93,9 @@ watch(
       </div>
 
       <AppPagination
-        :current-page="currentPage"
+        :current-page="listingStore.currentPage"
         :item-count="listingStore.items.length"
-        :page-size="currentFilters.take"
+        :page-size="listingStore.filters.take"
         @page-change="handlePageChange"
       />
     </template>
